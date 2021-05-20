@@ -1,0 +1,6 @@
+image: 8map.png
+resolution: 0.005
+origin: [0.0, 0.0, 0.0]
+occupied_thres: 0.5
+free_thresh: 0.196
+negate: 0
