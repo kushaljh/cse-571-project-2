@@ -1,0 +1,14 @@
+<launch>
+    <arg name="pkg_name" value="sensor_fusion_localization"/>
+    <arg name="node_name" default="sensor_fusion_node"/>
+    <arg name="veh" doc="Name of vehicle. ex: megaman"/>
+
+    <arg name="fusion_type" default="PF"/>
+    <arg name="n_particles" default="1000"/>
+
+    <group ns="$(arg veh)">
+        <node  name="$(arg node_name)" pkg="$(arg pkg_name)" type="$(arg node_name).py" output="screen" required="true"/>
+            <param name="fusion_type" value="$(arg fusion_type)"/>
+            <param name="n_particles" value="$(arg n_particles)"/>
+    </group>
+</launch>
