@@ -14,6 +14,8 @@ from sensor_msgs.msg import Joy
 
 from duckietown.dtros import DTROS, NodeType, TopicType
 
+GOAL_AT = 32
+DUCKIE_AT = 31
 
 class LaneFollowingNode(DTROS):
     def __init__(self, node_name):
@@ -53,6 +55,7 @@ class LaneFollowingNode(DTROS):
         # )
 
         self.tf_listener = tf.TransformListener()
+        self.reach = False
 
         self.log("Initialized.")
         self.start_following()
@@ -73,16 +76,27 @@ class LaneFollowingNode(DTROS):
 
 
     def at_callback(self, msg_sensor):
-        for at_id in msg_sensor.data:
-            if at_id == 32:
-                try:
-                    at_to_robo, _ = self.tf_listener.lookupTransform(f'/at_{at_id}_base_link', f'/april_tag_{at_id}', rospy.Time.now())
-                    r = np.sqrt(at_to_robo[0] ** 2 + at_to_robo[1] ** 2)
-                    print(f"the dist is : {r}")
-                    if r < 0.3:
-                        self.end_following()
-                except (tf.LookupException): # Will occur if odom frame does not exist
-                    continue
+        if GOAL_AT in msg_sensor.data:
+            try:
+                at_to_robo, _ = self.tf_listener.lookupTransform(f'/at_{GOAL_AT}_base_link', f'/april_tag_{GOAL_AT}', rospy.Time.now())
+                r = np.sqrt(at_to_robo[0] ** 2 + at_to_robo[1] ** 2)
+                print(f"the dist to goal : {r}")
+                if r < 0.4:
+                    self.reach = True
+                    self.end_following()
+            except (tf.LookupException): # Will occur if odom frame does not exist
+                print('Lookup Exception')
+        elif DUCKIE_AT in msg_sensor.data:
+            try:
+                at_to_robo, _ = self.tf_listener.lookupTransform(f'/at_{DUCKIE_AT}_base_link', f'/april_tag_{DUCKIE_AT}', rospy.Time.now())
+                r = np.sqrt(at_to_robo[0] ** 2 + at_to_robo[1] ** 2)
+                print(f"the dist to Duckie : {r}")
+                if r < 0.4:
+                    self.end_following()
+            except (tf.LookupException): # Will occur if odom frame does not exist
+                print('Lookup Exception')
+        elif not self.reach:
+            self.start_following()
         
 if __name__ == '__main__':
     # Initialize the node
