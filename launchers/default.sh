@@ -19,7 +19,8 @@ dt-launchfile-init
 # dt-exec rosrun my_package static_at_tf_publisher.py
 # dt-exec rosrun my_package my_subscriber_node.py
 # dt-exec roslaunch my_package multiple_nodes.launch veh:=$VEHICLE_NAME
-dt-exec roslaunch sensor_fusion_localization sensor_fusion_node.launch veh:=$VEHICLE_NAME
+#dt-exec roslaunch sensor_fusion_localization sensor_fusion_node.launch veh:=$VEHICLE_NAME
+dt-exec roslaunch lane_following lane_following_w_at.launch veh:=$VEHICLE_NAME
 dt-exec roslaunch my_viz viz_node.launch veh:=$VEHICLE_NAME
 dt-exec roslaunch my_viz trace_node.launch veh:=$VEHICLE_NAME
 dt-exec roslaunch my_static_tf static_at_tf_publisher1.launch veh:=$VEHICLE_NAME

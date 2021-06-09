@@ -37,7 +37,7 @@
 ## to the 'chatter' topic
 
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import Bool
 from cv_bridge import CvBridge
 import cv2
 from sensor_msgs.msg import Image
@@ -150,7 +150,6 @@ class RunModel:
         self.wrapper = Wrapper()
         rospy.Subscriber('images', Image, self.callback)
         # self.rate = rospy.Rate(2) 
-        pass
 
     def callback(self, data):
         # rospy.loginfo(rospy.get_caller_id() + 'I heard %s', data.data)
@@ -160,15 +159,11 @@ class RunModel:
         # torch_data = torch.from_numpy(im)
         p_boxes, p_classes, p_scores = self.wrapper.predict(im)
         p_classes = p_classes[0]
-        if (np.any(p_classes == 1)): # TODO logic
-            self.pub.publish("detected")
-        else:
-            self.pub.publish("not detected")
-        
-    def listener(self):
-        rospy.spin()
+        self.pub.publish(np.any(p_classes == 1))
+
 
 if __name__ == '__main__':
-    RunModel().listener()
+    detector_node = RunModel()
+    rospy.spin()
 
 

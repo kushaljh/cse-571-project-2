@@ -1,0 +1,12 @@
+<launch>
+    <arg name="pkg_name" value="lane_following"/>
+    <arg name="node_name" default="lane_following_w_at"/>
+    <arg name="veh" doc="Name of vehicle. ex: megaman"/>
+
+    <!-- <arg name="fusion_type" default="PF"/> -->
+
+    <group ns="$(arg veh)">
+        <node  name="$(arg node_name)" pkg="$(arg pkg_name)" type="$(arg node_name).py" output="screen" required="true"/>
+            <!-- <param name="fusion_type" value="$(arg fusion_type)"/> -->
+    </group>
+</launch>
