@@ -7,7 +7,7 @@ import tf
 import math
 
 from duckietown_msgs.msg import Twist2DStamped, Pose2DStamped
-from std_msgs.msg import Int32MultiArray
+from std_msgs.msg import Int32MultiArray, Bool
 
 from geometry_msgs.msg import Quaternion, PoseStamped, PoseArray, Pose, PoseWithCovarianceStamped
 from sensor_msgs.msg import Joy
@@ -28,10 +28,10 @@ class LaneFollowingNode(DTROS):
         # Get the vehicle name
         self.veh_name = rospy.get_namespace().strip("/") 
 
-        # self.pose_sub = rospy.Subscriber(
-        #     "/initialpose", 
-        #     PoseWithCovarianceStamped, 
-        #     self.clicked_pose_cb, 
+        # self.detect_sub = rospy.Subscriber(
+        #     "/duckie_detection", 
+        #     Bool, 
+        #     self.duckie_cb, 
         #     queue_size=1
         # )
 
@@ -47,12 +47,6 @@ class LaneFollowingNode(DTROS):
             self.at_callback,
             queue_size=1
         )
-
-        # self.pub_pose = rospy.Publisher(
-        #     "/pose",
-        #     PoseStamped,
-        #     queue_size=1
-        # )
 
         self.tf_listener = tf.TransformListener()
         self.reach = False
@@ -96,6 +90,12 @@ class LaneFollowingNode(DTROS):
             except (tf.LookupException): # Will occur if odom frame does not exist
                 print('Lookup Exception')
         elif not self.reach:
+            self.start_following()
+
+    def duckie_cb(self, msg_detect):
+        if msg_detect.data:
+            self.end_following()
+        else:
             self.start_following()
         
 if __name__ == '__main__':
